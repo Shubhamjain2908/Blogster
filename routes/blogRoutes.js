@@ -24,12 +24,16 @@ module.exports = app => {
     const cachedBlogs = await client.get(req.user.id);
 
     // if yes, thien respond to the req right away & return
+    if (cachedBlogs) {
+      console.log('---------------SERVING FROM CACHE---------------')
+      return res.send(JSON.parse(cachedBlogs));
+    }
 
     // if no, we need to res to req & update our cache to store the data
-
     const blogs = await Blog.find({ _user: req.user.id });
 
     res.send(blogs);
+    client.set(req.user.id, JSON.stringify(blogs));
   });
 
   app.post('/api/blogs', requireLogin, async (req, res) => {
