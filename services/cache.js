@@ -8,12 +8,24 @@ client.get = util.promisify(client.get);
 
 const exec = mongoose.Query.prototype.exec;
 
-mongoose.Query.prototype.exec = function () {
-    console.log('IM About to run a Query');
-
-    const key = Object.assign({}, this.getQuery(), {
+mongoose.Query.prototype.exec = async function () {
+    const key = JSON.stringify(Object.assign({}, this.getQuery(), {
         collection: this.mongooseCollection.name
-    });
-    console.log('Key => ', key);
-    return exec.apply(this, arguments);
+    }));
+
+    // Check value exists in redis
+    const cacheValue = await client.get(key);
+
+    // If exists, return that
+    if (cacheValue) {
+        console.log('Cache ------------', cacheValue);
+        return JSON.parse(cacheValue);
+    }
+
+    // else, issue the query & store the result in redis
+    const result = await exec.apply(this, arguments);
+
+    client.set(key, JSON.stringify(result));
+
+    return result;
 }
