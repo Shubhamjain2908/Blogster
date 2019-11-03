@@ -18,8 +18,8 @@ mongoose.Query.prototype.exec = async function () {
 
     // If exists, return that
     if (cacheValue) {
-        console.log('Cache ------------', cacheValue);
-        return JSON.parse(cacheValue);
+        console.log('Cache ------------', JSON.parse(cacheValue));
+        return new this.model(JSON.parse(cacheValue));
     }
 
     // else, issue the query & store the result in redis
