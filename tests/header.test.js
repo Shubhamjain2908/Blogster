@@ -10,6 +10,10 @@ beforeEach(async () => {
     await page.goto('localhost:3000');
 });
 
+afterEach(async () => {
+    await browser.close();
+});
+
 //For Chromium error => npm install puppeteer --unsafe-perm=true --allow-root
 test('We can launch a browser', async () => {
 
