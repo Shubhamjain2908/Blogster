@@ -12,7 +12,7 @@ require('./services/passport');
 require('./services/cache');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(keys.mongoURI, { useMongoClient: true });
+mongoose.connect(keys.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
 app.use(morgan('dev'));
